@@ -31,6 +31,9 @@ export default compose(
     <Collapse isOpen={isOpen} navbar>
       <Nav className="ml-auto" navbar>
         <NavItem>
+          <NavLink>活动</NavLink>
+        </NavItem>
+        <NavItem>
           <NavLink>人员</NavLink>
         </NavItem>
         <NavItem>
@@ -41,9 +44,6 @@ export default compose(
         </NavItem>
         <NavItem>
           <NavLink>球赛</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink>活动</NavLink>
         </NavItem>
         <NavbarUserItem className="hidden-xs-down"/>
       </Nav>
