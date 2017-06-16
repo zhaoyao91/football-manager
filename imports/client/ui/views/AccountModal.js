@@ -95,7 +95,7 @@ const LoginModalView = compose(
       <div className="d-flex justify-content-between w-100">
         <div>
           <Button className="mr-2" onClick={goSignup}>去注册</Button>
-          <Button onClick={goForgotPassword}>找回密码</Button>
+          <Button onClick={goForgotPassword}>重置密码</Button>
         </div>
         <Button color="primary" onClick={submit}>登录</Button>
       </div>
@@ -161,7 +161,7 @@ const SignupModalView = compose(
       <div className="d-flex justify-content-between w-100">
         <div>
           <Button className="mr-2" onClick={goLogin}>去登录</Button>
-          <Button onClick={goForgotPassword}>找回密码</Button>
+          <Button onClick={goForgotPassword}>重置密码</Button>
         </div>
         <Button color="primary" onClick={submit}>注册</Button>
       </div>
@@ -205,14 +205,14 @@ const ForgotPasswordModalView = compose(
   }),
 )(function ForgotPasswordModalView ({toggle, submit, onSubmit, email, onEmailChange, goLogin, goSignup}) {
   return <div>
-    <ModalHeader toggle={toggle}>找回密码</ModalHeader>
+    <ModalHeader toggle={toggle}>重置密码</ModalHeader>
     <ModalBody>
       <Form onSubmit={onSubmit}>
         <FormGroup>
           <Label>邮箱</Label>
           <Input value={email} onChange={onEmailChange}/>
         </FormGroup>
-        <Button className="hidden-xs-up">找回密码</Button>
+        <Button className="hidden-xs-up">重置密码</Button>
       </Form>
     </ModalBody>
     <ModalFooter>
@@ -221,7 +221,7 @@ const ForgotPasswordModalView = compose(
           <Button className="mr-2" onClick={goLogin}>去登录</Button>
           <Button onClick={goSignup}>去注册</Button>
         </div>
-        <Button color="primary" onClick={submit}>找回密码</Button>
+        <Button color="primary" onClick={submit}>重置密码</Button>
       </div>
     </ModalFooter>
   </div>
