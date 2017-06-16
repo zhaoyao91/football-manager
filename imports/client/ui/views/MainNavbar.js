@@ -3,15 +3,31 @@ import { compose, withState, withHandlers }from 'recompose'
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap'
 import { Link } from 'react-router-dom'
 
+import NavbarUserItem from './NavbarUserItem'
+import withStyles from '../../hocs/with_styles'
+
 export default compose(
   withState('isOpen', 'setIsOpen', false),
   withHandlers({
     toggle: ({setIsOpen}) => () => setIsOpen(x => !x)
+  }),
+  withStyles('styles', {
+    smNavbarUserItemNav: {
+      position: 'absolute',
+      left: '1rem',
+      right: '1rem',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+    }
   })
-)(function MainNavbar ({isOpen, toggle}) {
+)(function MainNavbar ({styles, isOpen, toggle}) {
   return <Navbar toggleable inverse color="inverse">
-    <NavbarToggler right onClick={toggle}/>
     <NavbarBrand tag={Link} to="/">足球管家</NavbarBrand>
+    <Nav navbar className="hidden-sm-up" {...styles.smNavbarUserItemNav}>
+      <NavbarUserItem/>
+    </Nav>
+    <NavbarToggler right onClick={toggle}/>
     <Collapse isOpen={isOpen} navbar>
       <Nav className="ml-auto" navbar>
         <NavItem>
@@ -29,6 +45,7 @@ export default compose(
         <NavItem>
           <NavLink>活动</NavLink>
         </NavItem>
+        <NavbarUserItem className="hidden-xs-down"/>
       </Nav>
     </Collapse>
   </Navbar>
