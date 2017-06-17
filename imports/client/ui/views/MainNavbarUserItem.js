@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavItem, NavLink, DropdownItem, UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap'
 import { setPropTypes, withProps, compose, withState, withHandlers }from 'recompose'
-import { withRouter } from'react-router-dom'
+import { withRouter, Link } from'react-router-dom'
 import PropTypes from 'prop-types'
 import { propOr } from 'lodash/fp'
 import Avatar from 'react-avatar'
@@ -56,18 +56,16 @@ const LoggedInUserItem = compose(
     }
   }),
 )(function LoggedInUserItem ({styles, logout, avatarValue, position}) {
-  return <NavLink className={classnames('p-0', {'ml-2': position === 'right'})}>
-    <UncontrolledDropdown>
-      <DropdownToggle tag="div">
-        <Avatar name={name} round size={40} value={avatarValue} textSizeRatio={2.5}/>
-      </DropdownToggle>
-      <DropdownMenu right={position === 'right'} {...styles.dropdownMenu}>
-        <DropdownItem>个人中心</DropdownItem>
-        <DropdownItem divider/>
-        <DropdownItem onClick={logout} className="text-danger">退出登录</DropdownItem>
-      </DropdownMenu>
-    </UncontrolledDropdown>
-  </NavLink>
+  return <UncontrolledDropdown className={classnames('p-0', {'ml-2': position === 'right'})}>
+    <DropdownToggle tag="div">
+      <Avatar name={name} round size={40} value={avatarValue} textSizeRatio={2.5}/>
+    </DropdownToggle>
+    <DropdownMenu right={position === 'right'} {...styles.dropdownMenu}>
+      <DropdownItem tag={Link} to="/me">个人中心</DropdownItem>
+      <DropdownItem divider/>
+      <DropdownItem onClick={logout} className="text-danger">退出登录</DropdownItem>
+    </DropdownMenu>
+  </UncontrolledDropdown>
 })
 
 function getEmailName (email) {
