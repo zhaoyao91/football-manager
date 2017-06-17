@@ -1,7 +1,6 @@
 import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import { compose, withState, withHandlers, setPropTypes } from 'recompose'
-import { withMethod, defineMethod } from 'react-method'
 import { prop, trim } from 'lodash/fp'
 import isEmail from 'validator/lib/isEmail'
 import { Accounts } from 'meteor/accounts-base'

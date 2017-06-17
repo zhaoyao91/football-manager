@@ -3,7 +3,7 @@ import { compose, withState, withHandlers }from 'recompose'
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap'
 import { Link } from 'react-router-dom'
 
-import NavbarUserItem from './NavbarUserItem'
+import NavbarUserItem from './MainNavbarUserItem'
 import withStyles from '../../hocs/with_styles'
 
 export default compose(
@@ -25,7 +25,7 @@ export default compose(
   return <Navbar toggleable inverse color="inverse">
     <NavbarBrand tag={Link} to="/">足球管家</NavbarBrand>
     <Nav navbar className="hidden-sm-up" {...styles.smNavbarUserItemNav}>
-      <NavbarUserItem/>
+      <NavbarUserItem position="center"/>
     </Nav>
     <NavbarToggler right onClick={toggle}/>
     <Collapse isOpen={isOpen} navbar>
@@ -45,7 +45,7 @@ export default compose(
         <NavItem>
           <NavLink>球赛</NavLink>
         </NavItem>
-        <NavbarUserItem className="hidden-xs-down"/>
+        <NavbarUserItem className="hidden-xs-down" position="right"/>
       </Nav>
     </Collapse>
   </Navbar>
