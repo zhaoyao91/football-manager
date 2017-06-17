@@ -7,7 +7,7 @@ import { Accounts } from 'meteor/accounts-base'
 import MainPageLayout from '../views/MainLayout'
 import withRouteParams from '../../hocs/with_route_params'
 import withAlert from '../../hocs/with_alert'
-import SingleColumnFormLayout from '../compontes/SingleColumnFormLayout'
+import SingleColumnFormLayout from '../views/SingleColumnFormLayout'
 
 export default compose(
   withRouter,
