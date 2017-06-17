@@ -13,7 +13,7 @@ export default compose(
   withRouter,
   withProps(({match}) => ({activePath: match.path}))
 )(function UserCenterNavs ({activePath}) {
-  return <Nav tabs className="mb-2">
+  return <Nav tabs className="mt-3 mb-3">
     {
       navs.map(nav => (
         <NavItem key={nav.name}>

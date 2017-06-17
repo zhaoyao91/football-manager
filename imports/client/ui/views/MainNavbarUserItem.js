@@ -3,13 +3,15 @@ import { NavItem, NavLink, DropdownItem, UncontrolledDropdown, DropdownToggle, D
 import { setPropTypes, withProps, compose, withState, withHandlers }from 'recompose'
 import { withRouter, Link } from'react-router-dom'
 import PropTypes from 'prop-types'
-import { propOr } from 'lodash/fp'
-import Avatar from 'react-avatar'
+import { prop } from 'lodash/fp'
 import classnames from 'classnames'
+import { Meteor } from 'meteor/meteor'
 
 import withCurrentUser from '../../hocs/with_current_user'
 import AccountModal from './AccountModal'
 import withStyles from '../../hocs/with_styles'
+import withUserProfile from '../../hocs/with_user_profile'
+import UserAvatar from '../views/UserAvatar'
 
 export default compose(
   withCurrentUser('currentUser')
@@ -41,13 +43,11 @@ const LoggedInUserItem = compose(
     position: PropTypes.oneOf(['right', 'left']),
     user: PropTypes.object
   }),
+  withUserProfile('profile', ({user}) => user._id),
   withRouter,
   withHandlers({
     logout: () => () => Meteor.logout(),
   }),
-  withProps(({user}) => ({
-    avatarValue: getEmailName(propOr('', 'emails.0.address', user)).slice(0, 2)
-  })),
   withStyles('styles', {
     dropdownMenu: {
       minWidth: 0,
@@ -55,10 +55,11 @@ const LoggedInUserItem = compose(
       position: 'absolute !important',
     }
   }),
-)(function LoggedInUserItem ({styles, logout, avatarValue, position}) {
+)
+(function LoggedInUserItem ({styles, logout, user, profile, position}) {
   return <UncontrolledDropdown className={classnames('p-0', {'ml-2': position === 'right'})}>
     <DropdownToggle tag="div">
-      <Avatar name={name} round size={40} value={avatarValue} textSizeRatio={2.5}/>
+      <UserAvatar size={40} avatar={profile.avatar} name={profile.name} email={prop('emails.0.address', user)}/>
     </DropdownToggle>
     <DropdownMenu right={position === 'right'} {...styles.dropdownMenu}>
       <DropdownItem tag={Link} to="/me">个人中心</DropdownItem>
@@ -67,7 +68,3 @@ const LoggedInUserItem = compose(
     </DropdownMenu>
   </UncontrolledDropdown>
 })
-
-function getEmailName (email) {
-  return email.substr(0, email.indexOf('@'))
-}
