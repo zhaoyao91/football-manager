@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import { compose, withState, withHandlers, setPropTypes } from 'recompose'
 import { withMethod, defineMethod } from 'react-method'
