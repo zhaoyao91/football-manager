@@ -44,15 +44,18 @@ const LoginModalView = compose(
   withState('email', 'setEmail', ''),
   withState('password', 'setPassword', ''),
   withAlert('alert'),
+  withState('loading', 'setLoading', false),
   withHandlers({
-    submit: ({alert, email, password, toggle}) => () => {
+    submit: ({setLoading, alert, email, password, toggle}) => () => {
       email = trim(email)
       password = trim(password)
 
       if (!isEmail(email)) return alert.error('请输入正确的邮箱')
       if (!password) return alert.error('密码不能为空')
 
+      setLoading(true)
       Meteor.loginWithPassword(email, password, (err) => {
+        setLoading(false)
         if (err) {
           console.error(err)
           if (err.reason === 'Incorrect password') alert.error('密码错误')
@@ -74,18 +77,18 @@ const LoginModalView = compose(
       submit()
     }
   }),
-)(function LoginModalView ({toggle, submit, onSubmit, email, onEmailChange, password, onPasswordChange, goSignup, goForgotPassword}) {
+)(function LoginModalView ({loading, toggle, submit, onSubmit, email, onEmailChange, password, onPasswordChange, goSignup, goForgotPassword}) {
   return <div>
     <ModalHeader toggle={toggle}>登录</ModalHeader>
     <ModalBody>
       <Form onSubmit={onSubmit}>
         <FormGroup>
           <Label>邮箱</Label>
-          <Input value={email} onChange={onEmailChange}/>
+          <Input value={email} onChange={onEmailChange} disabled={loading}/>
         </FormGroup>
         <FormGroup>
           <Label>密码</Label>
-          <Input type="password" value={password} onChange={onPasswordChange}/>
+          <Input type="password" value={password} onChange={onPasswordChange} disabled={loading}/>
         </FormGroup>
         <Button className="hidden-xs-up">登录</Button>
       </Form>
@@ -93,10 +96,10 @@ const LoginModalView = compose(
     <ModalFooter>
       <div className="d-flex justify-content-between w-100">
         <div>
-          <Button className="mr-2" onClick={goSignup}>去注册</Button>
-          <Button onClick={goForgotPassword}>重置密码</Button>
+          <Button className="mr-2" onClick={goSignup} disabled={loading}>去注册</Button>
+          <Button onClick={goForgotPassword} disabled={loading}>重置密码</Button>
         </div>
-        <Button color="primary" onClick={submit}>登录</Button>
+        <Button color="primary" onClick={submit} disabled={loading}>登录</Button>
       </div>
     </ModalFooter>
   </div>
@@ -111,15 +114,18 @@ const SignupModalView = compose(
   withState('email', 'setEmail', ''),
   withState('password', 'setPassword', ''),
   withAlert('alert'),
+  withState('loading', 'setLoading', false),
   withHandlers({
-    submit: ({toggle, alert, email, password}) => () => {
+    submit: ({setLoading, toggle, alert, email, password}) => () => {
       email = trim(email)
       password = trim(password)
 
       if (!isEmail(email)) return alert.error('请输入正确的邮箱')
       if (!password) return alert.error('密码不能为空')
 
+      setLoading(true)
       Accounts.createUser({email, password}, (err) => {
+        setLoading(false)
         if (err) {
           console.error(err)
           if (err.reason === 'Email already exists.') alert.error('该用户已经注册')
@@ -140,18 +146,18 @@ const SignupModalView = compose(
       submit()
     }
   }),
-)(function SignupModalView ({toggle, submit, onSubmit, email, onEmailChange, password, onPasswordChange, goLogin, goForgotPassword}) {
+)(function SignupModalView ({loading, toggle, submit, onSubmit, email, onEmailChange, password, onPasswordChange, goLogin, goForgotPassword}) {
   return <div>
     <ModalHeader toggle={toggle}>注册</ModalHeader>
     <ModalBody>
       <Form onSubmit={onSubmit}>
         <FormGroup>
           <Label>邮箱</Label>
-          <Input value={email} onChange={onEmailChange}/>
+          <Input disabled={loading} value={email} onChange={onEmailChange}/>
         </FormGroup>
         <FormGroup>
           <Label>密码</Label>
-          <Input type="password" value={password} onChange={onPasswordChange}/>
+          <Input disabled={loading} type="password" value={password} onChange={onPasswordChange}/>
         </FormGroup>
         <Button className="hidden-xs-up">注册</Button>
       </Form>
@@ -159,10 +165,10 @@ const SignupModalView = compose(
     <ModalFooter>
       <div className="d-flex justify-content-between w-100">
         <div>
-          <Button className="mr-2" onClick={goLogin}>去登录</Button>
-          <Button onClick={goForgotPassword}>重置密码</Button>
+          <Button disabled={loading} className="mr-2" onClick={goLogin}>去登录</Button>
+          <Button disabled={loading} onClick={goForgotPassword}>重置密码</Button>
         </div>
-        <Button color="primary" onClick={submit}>注册</Button>
+        <Button disabled={loading} color="primary" onClick={submit}>注册</Button>
       </div>
     </ModalFooter>
   </div>
@@ -176,13 +182,16 @@ const ForgotPasswordModalView = compose(
   }),
   withState('email', 'setEmail', ''),
   withAlert('alert'),
+  withState('loading', 'setLoading', false),
   withHandlers({
-    submit: ({toggle, alert, email}) => () => {
+    submit: ({setLoading, toggle, alert, email}) => () => {
       email = trim(email)
 
       if (!isEmail(email)) return alert.error('请输入正确的邮箱')
 
+      setLoading(true)
       Accounts.forgotPassword({email}, (err) => {
+        setLoading(false)
         if (err) {
           console.error(err)
           if (err.reason === 'User not found') alert.error('该用户尚未注册')
@@ -202,14 +211,14 @@ const ForgotPasswordModalView = compose(
       submit()
     }
   }),
-)(function ForgotPasswordModalView ({toggle, submit, onSubmit, email, onEmailChange, goLogin, goSignup}) {
+)(function ForgotPasswordModalView ({loading, toggle, submit, onSubmit, email, onEmailChange, goLogin, goSignup}) {
   return <div>
     <ModalHeader toggle={toggle}>重置密码</ModalHeader>
     <ModalBody>
       <Form onSubmit={onSubmit}>
         <FormGroup>
           <Label>邮箱</Label>
-          <Input value={email} onChange={onEmailChange}/>
+          <Input disabled={loading} value={email} onChange={onEmailChange}/>
         </FormGroup>
         <Button className="hidden-xs-up">重置密码</Button>
       </Form>
@@ -217,10 +226,10 @@ const ForgotPasswordModalView = compose(
     <ModalFooter>
       <div className="d-flex justify-content-between w-100">
         <div>
-          <Button className="mr-2" onClick={goLogin}>去登录</Button>
-          <Button onClick={goSignup}>去注册</Button>
+          <Button disabled={loading} className="mr-2" onClick={goLogin}>去登录</Button>
+          <Button disabled={loading} onClick={goSignup}>去注册</Button>
         </div>
-        <Button color="primary" onClick={submit}>重置密码</Button>
+        <Button disabled={loading} color="primary" onClick={submit}>重置密码</Button>
       </div>
     </ModalFooter>
   </div>
