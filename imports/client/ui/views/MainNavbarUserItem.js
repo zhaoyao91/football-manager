@@ -30,7 +30,7 @@ const LoginItem = compose(
     toggleModal: ({setModalOpen}) => () => setModalOpen(x => !x)
   }),
 )(function LoginItem ({isModalOpen, toggleModal}) {
-  return <NavLink onClick={toggleModal}>
+  return <NavLink onClick={toggleModal} className="p-2">
     登录
     <AccountModal isOpen={isModalOpen} toggle={toggleModal}/>
   </NavLink>
@@ -38,7 +38,7 @@ const LoginItem = compose(
 
 const LoggedInUserItem = compose(
   setPropTypes({
-    position: PropTypes.oneOf(['center', 'right', 'left']),
+    position: PropTypes.oneOf(['right', 'left']),
     user: PropTypes.object
   }),
   withRouter,
@@ -52,16 +52,16 @@ const LoggedInUserItem = compose(
     dropdownMenu: {
       minWidth: 0,
       marginTop: '1rem',
+      position: 'absolute !important',
     }
   }),
 )(function LoggedInUserItem ({styles, logout, avatarValue, position}) {
-  console.log(position)
   return <NavLink className={classnames('p-0', {'ml-2': position === 'right'})}>
     <UncontrolledDropdown>
-      <DropdownToggle tag="div" className="d-flex justify-content-center">
+      <DropdownToggle tag="div">
         <Avatar name={name} round size={40} value={avatarValue} textSizeRatio={2.5}/>
       </DropdownToggle>
-      <DropdownMenu right {...styles.dropdownMenu}>
+      <DropdownMenu right={position === 'right'} {...styles.dropdownMenu}>
         <DropdownItem>个人中心</DropdownItem>
         <DropdownItem divider/>
         <DropdownItem onClick={logout} className="text-danger">退出登录</DropdownItem>

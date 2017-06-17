@@ -12,24 +12,27 @@ export default compose(
     toggle: ({setIsOpen}) => () => setIsOpen(x => !x)
   }),
   withStyles('styles', {
-    smNavbarUserItemNav: {
+    xsNavbarBrand: {
       position: 'absolute',
-      left: '1rem',
-      right: '1rem',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      margin: 0
     }
   })
 )(function MainNavbar ({styles, isOpen, toggle}) {
   return <Navbar toggleable inverse color="inverse">
-    <NavbarBrand tag={Link} to="/">足球管家</NavbarBrand>
-    <Nav navbar className="hidden-sm-up" {...styles.smNavbarUserItemNav}>
-      <NavbarUserItem position="center"/>
-    </Nav>
-    <NavbarToggler right onClick={toggle}/>
+    <NavbarBrand tag={Link} to="/" className="hidden-xs-down">足球管家</NavbarBrand>
+
+    <div className="hidden-sm-up d-flex justify-content-between">
+      <Nav navbar>
+        <NavbarUserItem position="left"/>
+      </Nav>
+      <NavbarBrand tag={Link} to="/" {...styles.xsNavbarBrand}>足球管家</NavbarBrand>
+      <NavbarToggler onClick={toggle}/>
+    </div>
+
     <Collapse isOpen={isOpen} navbar>
-      <Nav className="ml-auto" navbar>
+      <Nav className="ml-auto text-center" navbar>
         <NavItem>
           <NavLink>活动</NavLink>
         </NavItem>
