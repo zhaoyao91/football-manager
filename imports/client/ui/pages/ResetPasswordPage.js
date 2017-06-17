@@ -1,23 +1,23 @@
 import React from 'react'
 import { compose, withProps, withHandlers, withState } from 'recompose'
 import { withRouter } from 'react-router-dom'
-import { Container, Form, FormGroup, Input, Label, Button } from 'reactstrap'
+import { Form, FormGroup, Input, Label, Button } from 'reactstrap'
 import { Accounts } from 'meteor/accounts-base'
 
 import MainPageLayout from '../views/MainLayout'
 import withRouteParams from '../../hocs/with_route_params'
 import withAlert from '../../hocs/with_alert'
+import SingleColumnFormLayout from '../compontes/SingleColumnFormLayout'
 
 export default compose(
   withRouter,
   withRouteParams('params'),
-  withProps(({params}) => ({token: params.token}))
+  withProps(({params}) => ({token: params.token})),
 )(function ResetPasswordPage ({token}) {
   return <MainPageLayout>
-    <Container className="pt-3">
-      <h1>重置密码</h1>
+    <SingleColumnFormLayout title="重置密码">
       <ResetPasswordForm token={token}/>
-    </Container>
+    </SingleColumnFormLayout>
   </MainPageLayout>
 })
 
