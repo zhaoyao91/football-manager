@@ -1,7 +1,7 @@
 import React from 'react'
-import { compose } from 'recompose'
-import { Col, Container, Form, FormGroup, Label, Input, FormText } from 'reactstrap'
-import { prop } from 'lodash/fp'
+import { compose, withHandlers, withProps } from 'recompose'
+import { Form, FormGroup, Label, Input, Col, Container } from 'reactstrap'
+import { prop, trim } from 'lodash/fp'
 
 import withStyles from '../../hocs/with_styles'
 import MainLayout from '../views/MainLayout'
@@ -11,6 +11,8 @@ import checkAuthForPage from '../../hocs/check_auth_for_page'
 import UserAvatar from '../views/UserAvatar'
 import withUserProfile from '../../hocs/with_user_profile'
 import { paddingContainer, narrowContainer } from '../../styles/styles'
+import EditableInputForm from '../components/EditableInputForm'
+import withAlert from '../../hocs/with_alert'
 
 export default compose(
   checkAuthForPage
@@ -48,40 +50,43 @@ const UserProfileView = compose(
     infoBlock: {
       flexGrow: 1,
     }
-  })
-)(function UserProfileView ({styles, profile, currentUser}) {
+  }),
+  withAlert('alert'),
+  withHandlers({
+    updateName: ({alert, profile}) => (tempValue, done) => {
+      const newValue = trim(tempValue)
+      Meteor.call('UserProfiles.setName', newValue, (err) => {
+        done(newValue)
+        if (err) {
+          console.error(err)
+          alert.error('姓名更新失败')
+        }
+        else {
+          alert.success('姓名更新成功')
+        }
+      })
+    }
+  }),
+  withProps(({currentUser}) => ({email: prop('emails.0.address', currentUser.user)}))
+)(function UserProfileView ({styles, email, profile, updateName}) {
   return <div {...styles.view}>
     <div {...styles.avatarBlock}>
-      <UserAvatar size={200} avatar={profile.avatar} name={profile.name}
-                  email={prop('emails.0.address', currentUser.user)}/>
+      <UserAvatar size={200} avatar={profile.avatar} name={profile.name} email={email}/>
     </div>
     <div {...styles.infoBlock}>
       <Form>
         <FormGroup row>
-          <Label sm="2">姓名</Label>
-          <Col sm="10"><Input/></Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm="2">性别</Label>
-          <Col sm="10"><Input/></Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm="2">生日</Label>
-          <Col sm="10"><Input/></Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm="2">身高</Label>
-          <Col sm="10"><Input/></Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm="2">体重</Label>
-          <Col sm="10"><Input/></Col>
-        </FormGroup>
-        <FormGroup row>
-          <Label sm="2">简介</Label>
-          <Col sm="10"><Input type="textarea" rows="5"/></Col>
+          <Label sm="2">邮箱</Label>
+          <Col sm="10">
+            <Input readOnly value={email}/>
+          </Col>
         </FormGroup>
       </Form>
+      <EditableInputForm label="姓名" value={profile.name || ''} updateValue={updateName}/>
+      <EditableInputForm label="性别"/>
+      <EditableInputForm label="生日"/>
+      <EditableInputForm label="身高"/>
+      <EditableInputForm label="体重"/>
     </div>
   </div>
 })
