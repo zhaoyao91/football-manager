@@ -1,6 +1,6 @@
 import React from 'react'
-import { Form, FormGroup, Label, Col, Input, Button }from 'reactstrap'
-import { withProps, compose, withState, defaultProps, withHandlers, setPropTypes } from 'recompose'
+import { Form, FormGroup, Label, Col, Input, Button, InputGroup, InputGroupAddon }from 'reactstrap'
+import { withProps, compose, withState, withHandlers, setPropTypes } from 'recompose'
 import PropTypes from 'prop-types'
 
 import withStyles from '../../hocs/with_styles'
@@ -9,10 +9,14 @@ export default compose(
   setPropTypes({
     value: PropTypes.any,
     updateValue: PropTypes.func, // func(value, done(newValue))，
-    Input: PropTypes.any,
-  }),
-  defaultProps({
-    Input: Input
+
+    beforeGroupAddon: PropTypes.node,
+    afterGroupAddon: PropTypes.node,
+
+    children: PropTypes.node,
+    placeholder: PropTypes.string,
+    type: PropTypes.string,
+    step: PropTypes.string,
   }),
   withState('tempValue', 'setTempValue', ({value}) => value),
   withProps(({value, tempValue}) => ({dirty: tempValue !== value})),
@@ -37,12 +41,28 @@ export default compose(
       flexShrink: 0,
     }
   }),
-)(function EditableInputForm ({Input, updating, dirty, styles, reset, label, type, placeholder, tempValue, onChange, onSubmit}) {
+)(function EditableInput ({beforeGroupAddon, afterGroupAddon, step, children, updating, dirty, styles, reset, label, type, placeholder, tempValue, onChange, onSubmit}) {
+  function renderInput () {
+    return <Input step={step} disabled={updating} type={type} placeholder={placeholder} value={tempValue}
+                  onChange={onChange}>
+      {children}
+    </Input>
+  }
+
   return <Form onSubmit={onSubmit}>
     <FormGroup row>
       <Label sm="2">{label}</Label>
       <Col sm="10" {...styles.inputWrapper}>
-        <Input disabled={updating} type={type} placeholder={placeholder} value={tempValue} onChange={onChange}/>
+        {
+          (!beforeGroupAddon && !afterGroupAddon) && renderInput()
+        }
+        {
+          (beforeGroupAddon || afterGroupAddon) && <InputGroup>
+            {beforeGroupAddon && <InputGroupAddon>{beforeGroupAddon}</InputGroupAddon>}
+            {renderInput()}
+            {afterGroupAddon && <InputGroupAddon>{afterGroupAddon}</InputGroupAddon>}
+          </InputGroup>
+        }
         {
           dirty && <div {...styles.buttonsWrapper}>
             <Button disabled={updating} outline color="primary" type="submit">保存</Button>

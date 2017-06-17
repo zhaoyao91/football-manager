@@ -23,12 +23,13 @@ Meteor.methods({
   },
 
   'UserProfiles.setBirthday'(birthday) {
-    check(birthday, Date)
+    check(birthday, Match.Maybe(Date))
 
     const userId = this.userId
     if (!userId) throw new Meteor.Error('not-loggedIn', 'user must login')
 
-    UserProfiles.upsert(userId, {$set: {birthday}})
+    if (!birthday) UserProfiles.upsert(userId, {$unset: {birthday: true}})
+    else UserProfiles.upsert(userId, {$set: {birthday}})
   },
 
   'UserProfiles.setIntroduction'(introduction) {
@@ -49,21 +50,23 @@ Meteor.methods({
     UserProfiles.upsert(userId, {$set: {avatar}})
   },
 
-  'UserProfiles.setHeight'(setHeight) {
-    check(setHeight, String)
+  'UserProfiles.setHeight'(height) {
+    check(height, Match.Maybe(Number))
 
     const userId = this.userId
     if (!userId) throw new Meteor.Error('not-loggedIn', 'user must login')
 
-    UserProfiles.upsert(userId, {$set: {setHeight}})
+    if (height === null) UserProfiles.upsert(userId, {$unset: {height: true}})
+    else UserProfiles.upsert(userId, {$set: {height}})
   },
 
   'UserProfiles.setWeight'(weight) {
-    check(weight, String)
+    check(weight, Match.Maybe(Number))
 
     const userId = this.userId
     if (!userId) throw new Meteor.Error('not-loggedIn', 'user must login')
 
-    UserProfiles.upsert(userId, {$set: {weight}})
+    if (weight === null) UserProfiles.upsert(userId, {$unset: {weight: true}})
+    else UserProfiles.upsert(userId, {$set: {weight}})
   },
 })
