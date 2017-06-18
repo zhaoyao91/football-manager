@@ -1,8 +1,21 @@
 import React from 'react'
-import { compose, withHandlers, withProps } from 'recompose'
-import { Form, FormGroup, Label, Input, Col, Container } from 'reactstrap'
+import { setPropTypes, compose, withHandlers, withProps } from 'recompose'
+import {
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Col,
+  Container,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  UncontrolledDropdown,
+} from 'reactstrap'
 import { prop, trim } from 'lodash/fp'
 import moment from 'moment'
+import PropTypes from 'prop-types'
+import withSelectFiles from 'react-select-files'
 
 import withStyles from '../../hocs/with_styles'
 import MainLayout from '../views/MainLayout'
@@ -14,6 +27,15 @@ import withUserProfile from '../../hocs/with_user_profile'
 import { paddingContainer, narrowContainer } from '../../styles/styles'
 import EditableInput from '../components/EditableInput'
 import withAlert from '../../hocs/with_alert'
+
+function getBirthdayString (birthday) {
+  return (birthday && moment(birthday).format('YYYY-MM-DD')) || ''
+}
+
+function getNumberString (number) {
+  if (number === null || number === undefined) return ''
+  else return String(number)
+}
 
 export default compose(
   checkAuthForPage
@@ -93,7 +115,10 @@ const UserProfileView = compose(
       })
     }
   }),
-  withProps(({currentUser}) => ({email: prop('emails.0.address', currentUser.user)})),
+  withProps(({currentUser}) => ({
+    user: currentUser.user,
+    email: prop('emails.0.address', currentUser.user)
+  })),
   withStyles('styles', {
     view: {
       '@media (min-width: 768px)': {
@@ -103,7 +128,7 @@ const UserProfileView = compose(
     avatarBlock: {
       flexShrink: 0,
       display: 'flex',
-      algnItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       '@media (min-width: 768px)': {
         marginRight: '3rem',
@@ -116,10 +141,10 @@ const UserProfileView = compose(
       flexGrow: 1,
     }
   })
-)(function UserProfileView ({updateIntroduction, styles, email, profile, updateName, updateGender, updateBirthday, updateHeight, updateWeight}) {
+)(function UserProfileView ({user, updateIntroduction, styles, email, profile, updateName, updateGender, updateBirthday, updateHeight, updateWeight}) {
   return <div {...styles.view}>
     <div {...styles.avatarBlock}>
-      <UserAvatar size={200} avatar={profile.avatar} name={profile.name} email={email}/>
+      <UserAvatarEditor user={user} profile={profile}/>
     </div>
     <div {...styles.infoBlock}>
       <Form>
@@ -147,11 +172,44 @@ const UserProfileView = compose(
   </div>
 })
 
-function getBirthdayString (birthday) {
-  return (birthday && moment(birthday).format('YYYY-MM-DD')) || ''
-}
-
-function getNumberString (number) {
-  if (number === null || number === undefined) return ''
-  else return String(number)
-}
+const UserAvatarEditor = compose(
+  setPropTypes({
+    user: PropTypes.object,
+    profile: PropTypes.object
+  }),
+  withAlert('alert'),
+  withSelectFiles('selectFiles'),
+  withHandlers({
+    uploadAvatar: ({selectFiles}) => () => {
+      selectFiles({accept: 'image/*', multiple: true}).then((files) => console.log(files, files[0]))
+    },
+    resetAvatar: ({alert}) => () => {
+      Meteor.call('UserProfiles.setAvatar', '', (err) => {
+        if (err) {
+          console.error(err)
+          alert.error('重置头像失败')
+        }
+      })
+    }
+  }),
+  withStyles('styles', {
+    dropdownMenu: {
+      minWidth: 0,
+      marginTop: '1rem',
+      left: '50%',
+      transform: 'translateX(-50%)'
+    }
+  }),
+)
+(function LoggedInUserItem ({styles, user, profile, resetAvatar, uploadAvatar}) {
+  return <UncontrolledDropdown>
+    <DropdownToggle tag="div">
+      <UserAvatar size={200} avatar={profile.avatar} name={profile.name} email={prop('emails.0.address', user)}/>
+    </DropdownToggle>
+    <DropdownMenu {...styles.dropdownMenu}>
+      <DropdownItem className="text-primary" onClick={uploadAvatar}>上传</DropdownItem>
+      <DropdownItem divider/>
+      <DropdownItem className="text-danger" onClick={resetAvatar}>重置</DropdownItem>
+    </DropdownMenu>
+  </UncontrolledDropdown>
+})
