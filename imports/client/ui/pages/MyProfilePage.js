@@ -40,9 +40,6 @@ const UserProfileView = compose(
           console.error(err)
           alert.error('姓名更新失败')
         }
-        else {
-          alert.success('姓名更新成功')
-        }
       })
     },
     updateGender: ({alert, profile}) => (tempValue, done) => {
@@ -52,9 +49,6 @@ const UserProfileView = compose(
         if (err) {
           console.error(err)
           alert.error('性别更新失败')
-        }
-        else {
-          alert.success('性别更新成功')
         }
       })
     },
@@ -66,9 +60,6 @@ const UserProfileView = compose(
           console.error(err)
           alert.error('生日更新失败')
         }
-        else {
-          alert.success('生日更新成功')
-        }
       })
     },
     updateHeight: ({alert, profile}) => (tempValue, done) => {
@@ -78,9 +69,6 @@ const UserProfileView = compose(
         if (err) {
           console.error(err)
           alert.error('身高更新失败')
-        }
-        else {
-          alert.success('身高更新成功')
         }
       })
     },
@@ -92,8 +80,15 @@ const UserProfileView = compose(
           console.error(err)
           alert.error('体重更新失败')
         }
-        else {
-          alert.success('体重更新成功')
+      })
+    },
+    updateIntroduction: ({alert, profile}) => (tempValue, done) => {
+      const newValue = trim(tempValue)
+      Meteor.call('UserProfiles.setIntroduction', newValue, (err) => {
+        done(newValue)
+        if (err) {
+          console.error(err)
+          alert.error('自我介绍更新失败')
         }
       })
     }
@@ -121,7 +116,7 @@ const UserProfileView = compose(
       flexGrow: 1,
     }
   })
-)(function UserProfileView ({styles, email, profile, updateName, updateGender, updateBirthday, updateHeight, updateWeight}) {
+)(function UserProfileView ({updateIntroduction, styles, email, profile, updateName, updateGender, updateBirthday, updateHeight, updateWeight}) {
   return <div {...styles.view}>
     <div {...styles.avatarBlock}>
       <UserAvatar size={200} avatar={profile.avatar} name={profile.name} email={email}/>
@@ -129,8 +124,8 @@ const UserProfileView = compose(
     <div {...styles.infoBlock}>
       <Form>
         <FormGroup row>
-          <Label sm="2">邮箱</Label>
-          <Col sm="10">
+          <Label sm="3">邮箱</Label>
+          <Col sm="9">
             <Input readOnly value={email}/>
           </Col>
         </FormGroup>
@@ -146,6 +141,8 @@ const UserProfileView = compose(
                      afterGroupAddon="厘米" updateValue={updateHeight}/>
       <EditableInput label="体重" type="number" step="any" value={getNumberString(profile.weight)}
                      afterGroupAddon="千克" updateValue={updateWeight}/>
+      <EditableInput label="自我介绍" type="textarea" rows="5" value={profile.introduction || ''}
+                     buttonsPosition="bottom" updateValue={updateIntroduction}/>
     </div>
   </div>
 })

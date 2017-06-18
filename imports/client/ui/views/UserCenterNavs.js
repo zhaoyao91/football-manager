@@ -4,7 +4,7 @@ import { Link, withRouter } from 'react-router-dom'
 import { compose, withProps } from 'recompose'
 
 const navs = [
-  {name: '个人信息', path: '/me/profile'},
+  {name: '基本信息', path: '/me/profile'},
   {name: '球员身份', path: '/me/as-player'},
   {name: '教练身份', path: '/me/as-coach'},
 ]
